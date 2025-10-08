@@ -1,0 +1,16 @@
+[project]
+name = "speech-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "advanced-alchemy>=1.6.3",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.118.1",
+    "pydantic-settings>=2.11.0",
+    "ruff>=0.14.0",
+    "scalar-fastapi>=1.4.3",
+    "structlog>=25.4.0",
+    "uvicorn>=0.37.0",
+]

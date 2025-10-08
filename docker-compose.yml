@@ -1,0 +1,35 @@
+services:
+  speech-recognition-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: speech-recognition-api:latest
+    container_name: speech-recognition-api
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - speech-network
+    depends_on:
+      - speech-recognition-postgres
+
+  speech-recognition-postgres:
+    image: postgres:15
+    container_name: speech-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - speech-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+networks:
+  speech-network:
+    name: speech-network
+
+volumes:
+  postgres-data:
+    name: postgres-data
