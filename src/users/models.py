@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
@@ -18,4 +20,4 @@ class UserModel(SoftDeleteMixin, UUIDAuditBase):
     is_active: Mapped[bool] = mapped_column(default=True)
     company_name: Mapped[str | None] = mapped_column(String(255))
 
-    api_keys: Mapped[list["ApiKeyModel"]] = relationship(back_populates="user")
+    api_keys: Mapped[list[ApiKeyModel]] = relationship(back_populates="user")

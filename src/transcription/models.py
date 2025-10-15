@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -49,4 +51,4 @@ class TranscriptionTaskModel(SoftDeleteMixin, UUIDAuditBase):
     file_size_bytes: Mapped[int | None]
 
     api_key_id: Mapped[UUID] = mapped_column(ForeignKey("api_keys.id"))
-    api_key: Mapped["ApiKeyModel"] = relationship(back_populates="transcription_tasks")
+    api_key: Mapped[ApiKeyModel] = relationship(back_populates="transcription_tasks")

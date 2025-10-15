@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -25,8 +27,8 @@ class ApiKeyModel(SoftDeleteMixin, UUIDAuditBase):
     name: Mapped[str | None] = mapped_column(String(255))
 
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
-    user: Mapped["UserModel"] = relationship(back_populates="api_keys")
+    user: Mapped[UserModel] = relationship(back_populates="api_keys")
 
-    transcription_tasks: Mapped[list["TranscriptionTaskModel"]] = relationship(
+    transcription_tasks: Mapped[list[TranscriptionTaskModel]] = relationship(
         back_populates="api_key",
     )
