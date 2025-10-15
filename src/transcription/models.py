@@ -14,7 +14,7 @@ from src.enums import BaseEnum
 from src.transcription.enums import Language, Model
 
 if TYPE_CHECKING:
-    from src.api_keys import ApiKeyModel
+    from src.api_keys.models import ApiKeyModel
 
 
 class Status(BaseEnum):

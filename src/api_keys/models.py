@@ -9,8 +9,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.soft_delete_mixin import SoftDeleteMixin
 
 if TYPE_CHECKING:
-    from src.transcription import TranscriptionTaskModel
-    from src.users import UserModel
+    from src.transcription.models import TranscriptionTaskModel
+    from src.users.models import UserModel
 
 
 class ApiKeyModel(SoftDeleteMixin, UUIDAuditBase):
