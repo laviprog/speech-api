@@ -9,7 +9,7 @@ dependencies = [
     "pydantic-settings>=2.11.0",
     "structlog>=25.4.0",
     "redis>=6.4.0",
-    "sqlalchemy>=2.0.40",
+    "advanced-alchemy>=1.6.3"
 ]
 
 [project.optional-dependencies]
@@ -19,7 +19,6 @@ api = [
     "mutagen>=1.47.0",
     "python-multipart>=0.0.20",
     "scalar-fastapi>=1.4.3",
-    "advanced-alchemy>=1.6.3",
     "asyncpg>=0.30.0",
 ]
 
