@@ -6,6 +6,6 @@
 README.md
 .git
 .env.example
-Dockerfile
 docker-compose.yml
 .dockerignore
+docker

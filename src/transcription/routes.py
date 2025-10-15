@@ -1,0 +1,96 @@
+from typing import Annotated
+
+from fastapi import APIRouter, File, Form, UploadFile, status
+
+from src.security.dependencies import ApiKeyIdDep
+from src.transcription.dependencies import TranscriptionTaskServiceDep
+from src.transcription.enums import Language, Model
+from src.transcription.schemas import LanguageList, ModelList, TranscriptionTask
+
+router = APIRouter(tags=["Speech Recognition"])
+
+
+@router.get(
+    "/models",
+    summary="Get available models",
+    description="Returns a list of available speech transcription models.",
+    responses={
+        200: {
+            "description": "List of available models",
+        },
+    },
+)
+async def get_models() -> ModelList:
+    return ModelList(models=Model.values())
+
+
+@router.get(
+    "/languages",
+    summary="Get available languages",
+    description="Returns a list of supported languages for transcription.",
+    responses={
+        200: {
+            "description": "List of supported languages",
+        },
+    },
+)
+async def get_languages() -> LanguageList:
+    return LanguageList(languages=Language.values())
+
+
+@router.post(
+    "/transcribe",
+    summary="Transcribe Audio",
+    description="""
+        Transcribe audio into text.
+    """,
+    responses={
+        status.HTTP_202_ACCEPTED: {
+            "description": "Transcription job created successfully",
+            "model": TranscriptionTask,
+        },
+    },
+)
+async def transcribe(
+    api_key_id: ApiKeyIdDep,
+    transcription_task_service: TranscriptionTaskServiceDep,
+    file: Annotated[UploadFile, File(...)],
+    language: Annotated[Language, Form()] = Language.EN,
+    model: Annotated[Model, Form()] = Model.TURBO,
+    recognition_mode: Annotated[bool, Form()] = False,
+    num_speakers: Annotated[int | None, Form(ge=1, le=15)] = None,
+) -> TranscriptionTask:
+    transcription_task = await transcription_task_service.create_transcription_task(
+        api_key_id=api_key_id,
+        file=file,
+        language=language,
+        model=model,
+        recognition_mode=recognition_mode,
+        num_speakers=num_speakers,
+    )
+    return transcription_task
+
+
+@router.get(
+    "/transcribe/{task_id}",
+    summary="Get Transcription Task Status",
+    description="Retrieve the status and result of a transcription task by its ID.",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Transcription task retrieved successfully",
+            "model": TranscriptionTask,
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Transcription task not found",
+        },
+    },
+)
+async def get_transcription_task(
+    task_id: str,
+    api_key_id: ApiKeyIdDep,
+    transcription_task_service: TranscriptionTaskServiceDep,
+) -> TranscriptionTask:
+    transcription_task = await transcription_task_service.get_transcription_task(
+        task_id, api_key_id
+    )
+    return transcription_task

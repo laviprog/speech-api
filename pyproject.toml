@@ -1,16 +1,52 @@
 [project]
 name = "speech-api"
-version = "0.1.0"
+version = "0.0.1"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "celery>=5.5.3",
+    "pydantic-settings>=2.11.0",
+    "structlog>=25.4.0",
+    "redis>=6.4.0",
+    "sqlalchemy>=2.0.40",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.118.1",
+    "uvicorn>=0.37.0",
+    "mutagen>=1.47.0",
+    "python-multipart>=0.0.20",
+    "scalar-fastapi>=1.4.3",
     "advanced-alchemy>=1.6.3",
     "asyncpg>=0.30.0",
-    "fastapi>=0.118.1",
-    "pydantic-settings>=2.11.0",
-    "ruff>=0.14.0",
-    "scalar-fastapi>=1.4.3",
-    "structlog>=25.4.0",
-    "uvicorn>=0.37.0",
 ]
+
+worker = [
+    "whisperx>=3.7.0",
+    "triton==3.4.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "psycopg2-binary>=2.9.7",
+]
+
+dev = [
+    "ruff>=0.14.0"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+exclude = [
+    ".venv",
+    "migrations"
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

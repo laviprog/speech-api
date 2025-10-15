@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse
 from scalar_fastapi import get_scalar_api_reference
 
 from src.schemas import HealthCheck
+from src.transcription.routes import router as speech_recognition_router
 
 router = APIRouter(tags=["Monitoring"])
 
@@ -38,3 +39,4 @@ async def redirect_to_docs():
 
 def routes_register(app: FastAPI) -> None:
     app.include_router(router=router)
+    app.include_router(router=speech_recognition_router)

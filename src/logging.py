@@ -81,6 +81,11 @@ class Logging(Generic[RendererType]):
                     "uvicorn.error": {"handlers": [], "level": "INFO", "propagate": True},
                     "uvicorn.access": {"handlers": [], "level": "NOTSET", "propagate": False},
                     "sqlalchemy": {"handlers": [], "level": "WARNING", "propagate": True},
+                    "python_multipart.multipart": {
+                        "handlers": [],
+                        "level": "WARNING",
+                        "propagate": True,
+                    },
                 },
             }
         )

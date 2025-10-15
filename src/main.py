@@ -12,9 +12,9 @@ from .routes import routes_register
 configure_logging()
 
 app = FastAPI(
-    title="TRS API",
+    title="Speech Recognition API",
     version="0.0.1",
-    docs_url="/api/v1/docs/swagger",
+    docs_url="/docs/swagger",
     openapi_url="/openapi.json",
     root_path="/api/v1",
     responses=error_responses,
