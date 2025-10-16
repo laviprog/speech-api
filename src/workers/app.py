@@ -1,9 +1,10 @@
+import src.database.models  # noqa
+import src.workers.signals  # noqa
+import src.workers.db  # noqa
+
 from celery import Celery
 
 from src.config import settings
-from src.logging import configure as configure_logging
-
-configure_logging()
 
 celery_app = Celery(
     "transcription_tasks",

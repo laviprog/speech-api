@@ -1,9 +1,5 @@
-import os
-
-from ..transcription.enums import Language, Model
 from .app import celery_app
 from .hooks import DBReportingTask
-from .state import get_transcriber
 
 
 @celery_app.task(
@@ -18,6 +14,11 @@ def transcribe_audio(
     recognition_mode: bool,
     num_speakers: int | None,
 ) -> dict:
+    import os
+
+    from ..transcription.enums import Language, Model
+    from .state import get_transcriber
+
     transcriber = get_transcriber()
 
     segments = transcriber.transcribe(

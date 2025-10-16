@@ -9,7 +9,7 @@ dependencies = [
     "pydantic-settings>=2.11.0",
     "structlog>=25.4.0",
     "redis>=6.4.0",
-    "advanced-alchemy>=1.6.3"
+    "advanced-alchemy>=1.6.3",
 ]
 
 [project.optional-dependencies]

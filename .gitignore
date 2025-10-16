@@ -21,3 +21,4 @@ wheels/
 htmlcov/
 
 .DS_Store
+models

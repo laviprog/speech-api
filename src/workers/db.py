@@ -17,6 +17,7 @@ _SessionLocal: Optional[sessionmaker] = None
 
 def init_db_sync() -> None:
     global _engine, _SessionLocal
+    log.debug("Initializing sync DB engine")
     if _engine is None:
         _engine = create_engine(
             settings.DB_URL_SYNC,
@@ -24,6 +25,7 @@ def init_db_sync() -> None:
             future=True,
         )
         _SessionLocal = sessionmaker(bind=_engine, autoflush=False, autocommit=False, future=True)
+        log.debug("Sync DB sessionmaker created")
 
 
 def dispose_db_sync() -> None:
@@ -34,6 +36,7 @@ def dispose_db_sync() -> None:
 
 
 def update_task_sync(task_id: UUID, **values) -> None:
+    global _SessionLocal
     if _SessionLocal is None:
         raise RuntimeError("DB not initialized: call init_db_sync() first")
 

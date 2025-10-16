@@ -9,4 +9,4 @@ RUN uv sync --frozen --no-dev --extra worker
 
 COPY . .
 
-CMD ["celery", "-A", "src.workers.app:celery_app", "worker", "--loglevel=debug", "--concurrency=2"]
+CMD ["uv", "run", "celery", "-A", "src.workers.app:celery_app", "worker", "-l", "INFO", "--concurrency=1"]

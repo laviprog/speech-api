@@ -154,15 +154,15 @@ class SpeechTranscriber:
 
         log.debug(
             "Transcribing...",
-            model=str(model),
-            language=str(language),
+            model=model.value,
+            language=language.value,
             batch_size=self._batch_size,
             chuck_size=self._chunk_size,
         )
         try:
             result = asr.transcribe(
                 audio=audio,
-                language=str(language),
+                language=language.value,
                 batch_size=self._batch_size,
                 chunk_size=self._chunk_size,
             )
