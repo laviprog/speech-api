@@ -10,6 +10,8 @@ dependencies = [
     "structlog>=25.4.0",
     "redis>=6.4.0",
     "advanced-alchemy>=1.6.3",
+    "asyncpg>=0.30.0",
+    "ruff>=0.14.0",
 ]
 
 [project.optional-dependencies]
@@ -19,7 +21,6 @@ api = [
     "mutagen>=1.47.0",
     "python-multipart>=0.0.20",
     "scalar-fastapi>=1.4.3",
-    "asyncpg>=0.30.0",
 ]
 
 worker = [

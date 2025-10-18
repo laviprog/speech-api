@@ -44,6 +44,7 @@ async def get_languages() -> LanguageList:
     description="""
         Transcribe audio into text.
     """,
+    response_model_exclude_none=True,
     responses={
         status.HTTP_202_ACCEPTED: {
             "description": "Transcription job created successfully",
@@ -75,6 +76,7 @@ async def transcribe(
     "/transcribe/{task_id}",
     summary="Get Transcription Task Status",
     description="Retrieve the status and result of a transcription task by its ID.",
+    response_model_exclude_none=True,
     responses={
         status.HTTP_200_OK: {
             "description": "Transcription task retrieved successfully",
