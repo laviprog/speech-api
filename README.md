@@ -44,4 +44,5 @@ docker compose up --build -d
 This command will build the Docker image and start the container with GPU support.
 
 Then, API will be available at `http://localhost:8080`.
+
 Documentation will be available at `http://localhost:8080/docs`.
