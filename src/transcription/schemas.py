@@ -30,14 +30,14 @@ class TranscriptionTask(BaseSchema):
     status: Status
     created_at: datetime
     message: str | None = None
-    result: TranscriptionResult | None = None
+    result: list[TranscriptionSegment] | None = None
     started_at: datetime | None = None
     completed_at: datetime | None = None
 
     @classmethod
     def from_model(
-        cls,
-        transcription_task_model: TranscriptionTaskModel,
+            cls,
+            transcription_task_model: TranscriptionTaskModel,
     ):
         return TranscriptionTask(
             task_id=transcription_task_model.id,

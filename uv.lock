@@ -1761,7 +1761,6 @@ dependencies = [
     { name = "celery-types" },
     { name = "pydantic-settings" },
     { name = "redis" },
-    { name = "ruff" },
     { name = "structlog" },
 ]
 
@@ -1794,7 +1793,6 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.20" },
     { name = "redis", specifier = ">=6.4.0" },
-    { name = "ruff", specifier = ">=0.14.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.0" },
     { name = "scalar-fastapi", marker = "extra == 'api'", specifier = ">=1.4.3" },
     { name = "structlog", specifier = ">=25.4.0" },
