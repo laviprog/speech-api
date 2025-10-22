@@ -1,4 +1,4 @@
-from typing import Annotated, AsyncGenerator
+from typing import Annotated, AsyncGenerator, TypeAlias
 
 from fastapi import Depends
 
@@ -11,6 +11,6 @@ async def provide_transcription_task_service() -> AsyncGenerator[TranscriptionTa
         yield service
 
 
-TranscriptionTaskServiceDep = Annotated[
+TranscriptionTaskServiceDep: TypeAlias = Annotated[
     TranscriptionTaskService, Depends(provide_transcription_task_service)
 ]

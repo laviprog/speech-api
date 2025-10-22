@@ -10,9 +10,10 @@ def transcribe_audio(
     *,
     audio_file: str,
     model: str,
-    language: str,
+    language: str | None,
     recognition_mode: bool,
     num_speakers: int | None,
+    align_mode: bool,
 ) -> dict:
     import os
 
@@ -24,9 +25,10 @@ def transcribe_audio(
     segments = transcriber.transcribe(
         audio_file=audio_file,
         model=Model(model),
-        language=Language(language),
+        language=Language(language) if language else None,
         recognition_mode=recognition_mode,
         num_speakers=num_speakers,
+        align_mode=align_mode,
     )
 
     result = [

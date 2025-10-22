@@ -21,10 +21,6 @@ class TranscriptionSegment(BaseSchema):
     end: float
 
 
-class TranscriptionResult(BaseSchema):
-    result: list[TranscriptionSegment]
-
-
 class TranscriptionTask(BaseSchema):
     task_id: UUID
     status: Status
@@ -36,25 +32,23 @@ class TranscriptionTask(BaseSchema):
 
     @classmethod
     def from_model(
-            cls,
-            transcription_task_model: TranscriptionTaskModel,
+        cls,
+        transcription_task_model: TranscriptionTaskModel,
     ):
         return TranscriptionTask(
             task_id=transcription_task_model.id,
             status=transcription_task_model.status,
             message=transcription_task_model.message,
-            result=TranscriptionResult(
-                result=[
-                    TranscriptionSegment(
-                        number=segment["number"],
-                        content=segment["content"],
-                        speaker=segment.get("speaker", None),
-                        start=segment["start"],
-                        end=segment["end"],
-                    )
-                    for segment in transcription_task_model.transcription_result
-                ]
-            )
+            result=[
+                TranscriptionSegment(
+                    number=segment["number"],
+                    content=segment["content"],
+                    speaker=segment.get("speaker", None),
+                    start=segment["start"],
+                    end=segment["end"],
+                )
+                for segment in transcription_task_model.transcription_result
+            ]
             if transcription_task_model.transcription_result
             else None,
             created_at=transcription_task_model.created_at,

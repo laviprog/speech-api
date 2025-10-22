@@ -30,9 +30,10 @@ class TranscriptionTaskService(
         api_key_id: UUID,
         file: UploadFile,
         model: Model,
-        language: Language,
+        language: Language | None,
         recognition_mode: bool,
         num_speakers: int | None,
+        align_mode: bool,
     ) -> TranscriptionTask:
         try:
             audio_path = await save_upload_to_temp(file)
@@ -62,6 +63,7 @@ class TranscriptionTaskService(
             status=Status.PENDING,
             model=model,
             language=language,
+            align_mode=align_mode,
             recognition_mode=recognition_mode,
             num_speakers=num_speakers,
             message="Task created and queued for processing.",
@@ -77,9 +79,10 @@ class TranscriptionTaskService(
             kwargs={
                 "audio_file": audio_path,
                 "model": model.value,
-                "language": language.value,
+                "language": language.value if language else None,
                 "recognition_mode": recognition_mode,
                 "num_speakers": num_speakers,
+                "align_mode": align_mode,
             },
         )
 

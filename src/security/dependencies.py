@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
 from uuid import UUID
 
 from fastapi import Depends, Header, HTTPException, status
@@ -7,7 +7,7 @@ from src.api_keys.dependencies import ApiKeyServiceDep
 
 
 async def verify_api_key(
-    api_key_service: ApiKeyServiceDep, authorization: str = Header(...)
+        api_key_service: ApiKeyServiceDep, authorization: str = Header(...)
 ) -> UUID:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
@@ -22,4 +22,4 @@ async def verify_api_key(
     return api_key.id
 
 
-ApiKeyIdDep = Annotated[UUID, Depends(verify_api_key)]
+ApiKeyIdDep: TypeAlias = Annotated[UUID, Depends(verify_api_key)]

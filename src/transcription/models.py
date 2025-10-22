@@ -38,9 +38,12 @@ class TranscriptionTaskModel(SoftDeleteMixin, UUIDAuditBase):
     message: Mapped[str | None]
 
     model: Mapped[Model] = mapped_column(SQLEnum(Model, name="transcription_model"))
-    language: Mapped[Language] = mapped_column(SQLEnum(Language, name="transcription_language"))
+    language: Mapped[Language | None] = mapped_column(
+        SQLEnum(Language, name="transcription_language")
+    )
     recognition_mode: Mapped[bool] = mapped_column(default=False)
     num_speakers: Mapped[int | None]
+    align_mode: Mapped[bool | None] = mapped_column(default=False)
 
     started_at: Mapped[datetime | None] = mapped_column(DateTimeUTC(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTimeUTC(timezone=True))

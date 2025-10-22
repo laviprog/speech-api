@@ -1,4 +1,4 @@
-from typing import Annotated, AsyncGenerator
+from typing import Annotated, AsyncGenerator, TypeAlias
 
 from fastapi import Depends
 
@@ -11,4 +11,4 @@ async def provide_api_key_service() -> AsyncGenerator[ApiKeyService, None]:
         yield service
 
 
-ApiKeyServiceDep = Annotated[ApiKeyService, Depends(provide_api_key_service)]
+ApiKeyServiceDep: TypeAlias = Annotated[ApiKeyService, Depends(provide_api_key_service)]

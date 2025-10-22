@@ -145,7 +145,7 @@ class SpeechTranscriber:
         audio: ndarray,
         audio_file: str,
         model: Model,
-        language: Language,
+        language: Language | None,
     ) -> TranscriptionResult:
         """
         Transcribes the given audio using the specified ASR model and language.
@@ -155,14 +155,14 @@ class SpeechTranscriber:
         log.debug(
             "Transcribing...",
             model=model.value,
-            language=language.value,
+            language=language.value if language else None,
             batch_size=self._batch_size,
             chuck_size=self._chunk_size,
         )
         try:
             result = asr.transcribe(
                 audio=audio,
-                language=language.value,
+                language=language.value if language else None,
                 batch_size=self._batch_size,
                 chunk_size=self._chunk_size,
             )
@@ -174,7 +174,7 @@ class SpeechTranscriber:
         return result
 
     def _align(
-        self, segments: list[SingleSegment], audio: ndarray, language: Language
+        self, segments: list[SingleSegment], audio: ndarray, language: str
     ) -> AlignedTranscriptionResult | None:
         """
         Aligns the transcription segments with the audio using the alignment model.
@@ -214,9 +214,10 @@ class SpeechTranscriber:
         self,
         audio_file: str,
         model: Model,
-        language: Language,
+        language: Language | None,
         recognition_mode: bool,
         num_speakers: int | None,
+        align_mode: bool,
     ) -> list[SingleSegment]:
         """
         Transcribes the given audio file, optionally performing speaker diarization.
@@ -230,17 +231,18 @@ class SpeechTranscriber:
             language=language,
         )
 
-        align_result = self._align(
-            segments=transcription_result["segments"],
-            audio=audio,
-            language=language,
-        )
+        if align_mode:
+            align_result = self._align(
+                segments=transcription_result["segments"],
+                audio=audio,
+                language=transcription_result["language"],
+            )
 
-        if align_result:
-            transcription_result["segments"] = [
-                SingleSegment(start=seg["start"], end=seg["end"], text=seg["text"].strip())
-                for seg in align_result["segments"]
-            ]
+            if align_result:
+                transcription_result["segments"] = [
+                    SingleSegment(start=seg["start"], end=seg["end"], text=seg["text"].strip())
+                    for seg in align_result["segments"]
+                ]
 
         if recognition_mode:
             transcription_result = self._diarize(transcription_result, audio, num_speakers)
