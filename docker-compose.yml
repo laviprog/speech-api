@@ -89,6 +89,7 @@ services:
       - transcribe:/srv/transcribe
     environment:
       - TRANSCRIBE_TMP_DIR=/srv/transcribe
+    #  - NVIDIA_VISIBLE_DEVICES=0
     depends_on:
       speech-postgres:
         condition: service_healthy

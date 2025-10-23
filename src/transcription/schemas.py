@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Self
 from uuid import UUID
 
 from src.schemas import BaseSchema
@@ -26,6 +27,9 @@ class TranscriptionTask(BaseSchema):
     status: Status
     created_at: datetime
     message: str | None = None
+
+
+class TranscriptionTaskWithResult(TranscriptionTask):
     result: list[TranscriptionSegment] | None = None
     started_at: datetime | None = None
     completed_at: datetime | None = None
@@ -33,12 +37,12 @@ class TranscriptionTask(BaseSchema):
     @classmethod
     def from_model(
         cls,
-        transcription_task_model: TranscriptionTaskModel,
-    ):
-        return TranscriptionTask(
-            task_id=transcription_task_model.id,
-            status=transcription_task_model.status,
-            message=transcription_task_model.message,
+        model: TranscriptionTaskModel,
+    ) -> Self:
+        return cls(
+            task_id=model.id,
+            status=model.status,
+            message=model.message,
             result=[
                 TranscriptionSegment(
                     number=segment["number"],
@@ -47,11 +51,11 @@ class TranscriptionTask(BaseSchema):
                     start=segment["start"],
                     end=segment["end"],
                 )
-                for segment in transcription_task_model.transcription_result
+                for segment in model.result.transcription_result
             ]
-            if transcription_task_model.transcription_result
+            if model.result
             else None,
-            created_at=transcription_task_model.created_at,
-            started_at=transcription_task_model.started_at,
-            completed_at=transcription_task_model.completed_at,
+            created_at=model.created_at,
+            started_at=model.started_at,
+            completed_at=model.completed_at,
         )

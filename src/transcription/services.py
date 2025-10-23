@@ -10,8 +10,8 @@ from ..utils.media import get_duration_seconds, get_filesize_bytes
 from ..workers.app import celery_app
 from .enums import Language, Model
 from .models import Status, TranscriptionTaskModel
-from .repositories import TranscriptionTaskRepository
-from .schemas import TranscriptionTask
+from .repositories import TranscriptionResultRepository, TranscriptionTaskRepository
+from .schemas import TranscriptionTask, TranscriptionTaskWithResult
 
 
 class TranscriptionTaskService(
@@ -24,6 +24,7 @@ class TranscriptionTaskService(
     def __init__(self, session, **kwargs):
         kwargs.setdefault("auto_commit", True)
         super().__init__(session=session, **kwargs)
+        self.result_repository = TranscriptionResultRepository(session=session)
 
     async def create_transcription_task(
         self,
@@ -92,7 +93,7 @@ class TranscriptionTaskService(
         self,
         task_id: str,
         api_key_id: UUID,
-    ):
+    ) -> TranscriptionTaskWithResult:
         try:
             task_uuid = UUID(task_id)
         except ValueError as e:
@@ -101,9 +102,7 @@ class TranscriptionTaskService(
                 detail="Invalid task id",
             ) from e
 
-        transcription_task = await self.repository.get_one_or_none(
-            TranscriptionTaskModel.id == task_uuid
-        )
+        transcription_task = await self.repository.get_with_result(task_uuid)
 
         if not transcription_task or transcription_task.api_key_id != api_key_id:
             raise HTTPException(
@@ -111,4 +110,4 @@ class TranscriptionTaskService(
                 detail="Transcription task not found",
             )
 
-        return TranscriptionTask.from_model(transcription_task)
+        return TranscriptionTaskWithResult.from_model(transcription_task)

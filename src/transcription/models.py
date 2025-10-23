@@ -48,10 +48,26 @@ class TranscriptionTaskModel(SoftDeleteMixin, UUIDAuditBase):
     started_at: Mapped[datetime | None] = mapped_column(DateTimeUTC(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTimeUTC(timezone=True))
 
-    transcription_result: Mapped[dict | None] = mapped_column(JSONB())
-
     duration_seconds: Mapped[float | None]
     file_size_bytes: Mapped[int | None]
 
     api_key_id: Mapped[UUID] = mapped_column(ForeignKey("api_keys.id"))
     api_key: Mapped[ApiKeyModel] = relationship(back_populates="transcription_tasks")
+
+    result: Mapped[TranscriptionResultModel | None] = relationship(
+        back_populates="task", lazy="noload", cascade="all, delete-orphan"
+    )
+
+
+class TranscriptionResultModel(UUIDAuditBase):
+    """Transcription Result model - stores the heavy JSONB data separately."""
+
+    __tablename__ = "transcription_results"
+
+    task_id: Mapped[UUID] = mapped_column(
+        ForeignKey("transcription_tasks.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+
+    transcription_result: Mapped[dict] = mapped_column(JSONB(), nullable=False)
+
+    task: Mapped[TranscriptionTaskModel] = relationship(back_populates="result")

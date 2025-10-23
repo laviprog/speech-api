@@ -5,7 +5,12 @@ from fastapi import APIRouter, File, Form, UploadFile, status
 from src.security.dependencies import ApiKeyIdDep
 from src.transcription.dependencies import TranscriptionTaskServiceDep
 from src.transcription.enums import Language, Model
-from src.transcription.schemas import LanguageList, ModelList, TranscriptionTask
+from src.transcription.schemas import (
+    LanguageList,
+    ModelList,
+    TranscriptionTask,
+    TranscriptionTaskWithResult,
+)
 
 router = APIRouter(tags=["Speech Recognition"])
 
@@ -55,12 +60,19 @@ async def get_languages() -> LanguageList:
 async def transcribe(
     api_key_id: ApiKeyIdDep,
     transcription_task_service: TranscriptionTaskServiceDep,
-    file: Annotated[UploadFile, File(...)],
-    language: Annotated[Language | None, Form()] = None,
-    model: Annotated[Model, Form()] = Model.TURBO,
-    recognition_mode: Annotated[bool, Form()] = False,
-    num_speakers: Annotated[int | None, Form(ge=1, le=15)] = None,
-    align_mode: Annotated[bool, Form()] = False,
+    file: Annotated[UploadFile, File(..., description="Upload file (.mp3, .wav)")],
+    language: Annotated[
+        Language | None,
+        Form(description="Language code for the audio (recommend, auto-detected if not provided)"),
+    ] = None,
+    model: Annotated[
+        Model, Form(description="Transcription model to use (recommend turbo)")
+    ] = Model.TURBO,
+    recognition_mode: Annotated[bool, Form(description="Enable speaker detection")] = False,
+    num_speakers: Annotated[
+        int | None, Form(ge=1, le=15, description="Number of speakers for diarization")
+    ] = None,
+    align_mode: Annotated[bool, Form(description="Enable word-level timestamp alignment")] = False,
 ) -> TranscriptionTask:
     transcription_task = await transcription_task_service.create_transcription_task(
         api_key_id=api_key_id,
@@ -82,7 +94,7 @@ async def transcribe(
     responses={
         status.HTTP_200_OK: {
             "description": "Transcription task retrieved successfully",
-            "model": TranscriptionTask,
+            "model": TranscriptionTaskWithResult,
         },
         status.HTTP_404_NOT_FOUND: {
             "description": "Transcription task not found",
@@ -93,7 +105,7 @@ async def get_transcription_task(
     task_id: str,
     api_key_id: ApiKeyIdDep,
     transcription_task_service: TranscriptionTaskServiceDep,
-) -> TranscriptionTask:
+) -> TranscriptionTaskWithResult:
     transcription_task = await transcription_task_service.get_transcription_task(
         task_id, api_key_id
     )
