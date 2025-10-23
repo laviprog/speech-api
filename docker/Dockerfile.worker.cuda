@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+FROM nvidia/cuda:12.2.2-cudnn8-runtime-ubuntu22.04
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates ffmpeg && \
@@ -9,7 +9,7 @@ WORKDIR /app
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:${PATH}"
 
-ENV PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu124"
+ENV PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu122"
 
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --extra worker
