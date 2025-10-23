@@ -385,7 +385,7 @@ wheels = [
 
 [[package]]
 name = "ctranslate2"
-version = "4.6.0"
+version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
@@ -393,11 +393,10 @@ dependencies = [
     { name = "setuptools" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/02/e9/3f1e35528b445b2fc928063f3ddd1ca5ac195b08c28ab10312e599c5cf28/ctranslate2-4.6.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:ff3ad05010857d450ee40fd9c28a33c10215a7180e189151e378ed2d19be8a57", size = 13310925, upload-time = "2025-04-08T19:49:47.051Z" },
-    { url = "https://files.pythonhosted.org/packages/2a/72/3880c3be097596a523cb24b52dc0514f685c2ec0bab9cceaeed874aeddec/ctranslate2-4.6.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:78a844c633b6d450b20adac296f7f60ac2a67f2c76e510a83c8916835dc13f04", size = 1297913, upload-time = "2025-04-08T19:49:48.702Z" },
-    { url = "https://files.pythonhosted.org/packages/3f/b3/77af5ad0e896dd27a10db768d7a67b8807e394c8e68c2fa559c662a33547/ctranslate2-4.6.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:44bf4b973ea985b80696093e11e9c72909aee55b35abb749428333822c70ce68", size = 17485132, upload-time = "2025-04-08T19:49:50.076Z" },
-    { url = "https://files.pythonhosted.org/packages/ce/e9/06c2bf49d6808359d71f1126ec5b8e5a5c3c9526899ed58f24666e0e1b86/ctranslate2-4.6.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:06b2ca5c2905b540dd833a0b75d912ec9acc18d33a2dc4f85f12032851659a0d", size = 38816537, upload-time = "2025-04-08T19:49:52.735Z" },
-    { url = "https://files.pythonhosted.org/packages/ec/4c/0ecd260233290bee4b2facec4d8e755e57d8781d68f276e1248433993c9f/ctranslate2-4.6.0-cp312-cp312-win_amd64.whl", hash = "sha256:511cdf810a5bf6a2cec735799e5cd47966e63f8f7688fdee1b97fed621abda00", size = 19470040, upload-time = "2025-04-08T19:49:55.274Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/17/1a13c984d98caf96f511455b2edf94fbbabba21750668f4ada139b537b7f/ctranslate2-4.4.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:aea8067e0c5ea44fa3fb89a359c5be735bf7c626efaee129358d0964a625f212", size = 1331503, upload-time = "2024-09-09T10:51:10.928Z" },
+    { url = "https://files.pythonhosted.org/packages/02/19/99ace6662e0b079db28904a67323c2be4e2f4bfe9ea1e61310d6d53f8c19/ctranslate2-4.4.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0658aa1cde18ddb30a1750561a65b3162669a4290ea90c560947cfea3a2dde34", size = 16321841, upload-time = "2024-09-09T10:51:12.878Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/dc/2fe22d425e6d3ce574155c0a37217ba53f64958a772e65cb58045fb6728c/ctranslate2-4.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1656fca5ed866596aea49f045ad7aeb1438ba4d9a56477ae29844672692d5e78", size = 37600163, upload-time = "2024-09-09T10:51:15.584Z" },
+    { url = "https://files.pythonhosted.org/packages/77/53/d95bac0fe66051bfe5693efe96189959651dbeb072590ca48199f346b562/ctranslate2-4.4.0-cp312-cp312-win_amd64.whl", hash = "sha256:3b39c69ecd2f3a71de37b0bcc911416d570c47e4456434a961846359df01b0ba", size = 19328235, upload-time = "2024-09-09T10:51:18.319Z" },
 ]
 
 [[package]]
@@ -1798,7 +1797,7 @@ requires-dist = [
     { name = "structlog", specifier = ">=25.4.0" },
     { name = "triton", marker = "platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'worker'", specifier = "==3.4.0" },
     { name = "uvicorn", marker = "extra == 'api'", specifier = ">=0.37.0" },
-    { name = "whisperx", marker = "extra == 'worker'", specifier = ">=3.7.0" },
+    { name = "whisperx", marker = "extra == 'worker'", specifier = "==3.4.3" },
 ]
 provides-extras = ["api", "worker", "dev"]
 
@@ -2160,24 +2159,23 @@ wheels = [
 
 [[package]]
 name = "whisperx"
-version = "3.7.2"
+version = "3.4.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "av" },
     { name = "ctranslate2" },
     { name = "faster-whisper" },
     { name = "nltk" },
     { name = "numpy" },
+    { name = "onnxruntime" },
     { name = "pandas" },
     { name = "pyannote-audio" },
     { name = "torch" },
     { name = "torchaudio" },
     { name = "transformers" },
-    { name = "triton", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/af/ac/044a7800d0ef593189050342cff2cf2f1e2fddf634b33eb2cb476e76750a/whisperx-3.7.2.tar.gz", hash = "sha256:cb3c02fb7bdb5aea47205f2da22c31487afd46a162c5d0df580aaedd8a0a2607", size = 16488053, upload-time = "2025-10-12T08:39:15.126Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/19/f206c806d6eb19888193fb6d1a1a74d9c009eaf48740d135d4aa80fe2087/whisperx-3.4.3.tar.gz", hash = "sha256:e2e93654f8fe50cc077c14e8363140e4de4f13b678f64b1b440a68acd6634cc6", size = 16486663, upload-time = "2025-10-01T06:38:15.114Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/15/33/cc3146fb0324eda6e3458841a3216aad1fb54823b933d4f324469dbedce0/whisperx-3.7.2-py3-none-any.whl", hash = "sha256:de31099e4d958fbba6074471e7822dff52b74b128abec836c8dc2f0e5a17574c", size = 16485187, upload-time = "2025-10-12T08:39:12.584Z" },
+    { url = "https://files.pythonhosted.org/packages/31/43/fe452ed1c0616cb03e5bf560a9fbb6caafcff06d742c83e6ef8a6a4b2d43/whisperx-3.4.3-py3-none-any.whl", hash = "sha256:47b7819f6eb288109f068938b1a2e777c7e9755add9f689602a66f57700c2966", size = 16483451, upload-time = "2025-10-01T06:38:12.49Z" },
 ]
 
 [[package]]

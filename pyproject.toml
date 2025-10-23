@@ -24,7 +24,7 @@ api = [
 ]
 
 worker = [
-    "whisperx>=3.7.0",
+    "whisperx==3.4.3",
     "triton==3.4.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
     "psycopg2-binary>=2.9.7",
 ]

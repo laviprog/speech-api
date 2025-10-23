@@ -6,7 +6,7 @@ from whisperx.alignment import align, load_align_model
 from whisperx.asr import FasterWhisperPipeline, load_model
 from whisperx.audio import load_audio
 from whisperx.diarize import DiarizationPipeline, assign_word_speakers
-from whisperx.schema import AlignedTranscriptionResult, SingleSegment, TranscriptionResult
+from whisperx.types import AlignedTranscriptionResult, SingleSegment, TranscriptionResult
 
 from src.transcription.enums import Language, Model
 from src.workers import log
@@ -18,14 +18,14 @@ class SpeechTranscriber:
     """
 
     def __init__(
-        self,
-        device: str,
-        compute_type: str,
-        download_root: str,
-        batch_size: int,
-        chunk_size: int,
-        init_models: list[Model] | None = None,
-        hf_token: str | None = None,
+            self,
+            device: str,
+            compute_type: str,
+            download_root: str,
+            batch_size: int,
+            chunk_size: int,
+            init_models: list[Model] | None = None,
+            hf_token: str | None = None,
     ):
         """
         Initializes the SpeechTranscription with device configuration
@@ -141,11 +141,11 @@ class SpeechTranscriber:
         return audio
 
     def _transcribe(
-        self,
-        audio: ndarray,
-        audio_file: str,
-        model: Model,
-        language: Language | None,
+            self,
+            audio: ndarray,
+            audio_file: str,
+            model: Model,
+            language: Language | None,
     ) -> TranscriptionResult:
         """
         Transcribes the given audio using the specified ASR model and language.
@@ -174,7 +174,7 @@ class SpeechTranscriber:
         return result
 
     def _align(
-        self, segments: list[SingleSegment], audio: ndarray, language: str
+            self, segments: list[SingleSegment], audio: ndarray, language: str
     ) -> AlignedTranscriptionResult | None:
         """
         Aligns the transcription segments with the audio using the alignment model.
@@ -193,7 +193,7 @@ class SpeechTranscriber:
             return None
 
     def _diarize(
-        self, transcription_result: TranscriptionResult, audio: ndarray, num_speakers: int
+            self, transcription_result: TranscriptionResult, audio: ndarray, num_speakers: int
     ) -> TranscriptionResult:
         """
         Performs speaker diarization and assigns speakers to transcription segments.
@@ -211,13 +211,13 @@ class SpeechTranscriber:
             return transcription_result
 
     def transcribe(
-        self,
-        audio_file: str,
-        model: Model,
-        language: Language | None,
-        recognition_mode: bool,
-        num_speakers: int | None,
-        align_mode: bool,
+            self,
+            audio_file: str,
+            model: Model,
+            language: Language | None,
+            recognition_mode: bool,
+            num_speakers: int | None,
+            align_mode: bool,
     ) -> list[SingleSegment]:
         """
         Transcribes the given audio file, optionally performing speaker diarization.
