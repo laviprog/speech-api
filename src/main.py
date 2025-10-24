@@ -1,9 +1,9 @@
-import src.database.models  # noqa
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+import src.database.models  # noqa
 from src.middlewares import LogMiddleware
-
+from .config import settings
 from .exceptions.handlers import setup_exception_handlers
 from .exceptions.responses import error_responses
 from .lifecycle import lifespan
@@ -17,7 +17,7 @@ app = FastAPI(
     version="0.0.1",
     docs_url="/docs/swagger",
     openapi_url="/openapi.json",
-    root_path="/api/v1",
+    root_path=settings.ROOT_PATH,
     responses=error_responses,
     lifespan=lifespan,
 )

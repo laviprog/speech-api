@@ -4,14 +4,14 @@ from uuid import UUID
 from advanced_alchemy.extensions.fastapi import service
 from fastapi import HTTPException, UploadFile, status
 
-from .. import log
-from ..utils.files import save_upload_to_temp
-from ..utils.media import get_duration_seconds, get_filesize_bytes
-from ..workers.app import celery_app
 from .enums import Language, Model
 from .models import Status, TranscriptionTaskModel
 from .repositories import TranscriptionResultRepository, TranscriptionTaskRepository
 from .schemas import TranscriptionTask, TranscriptionTaskWithResult
+from .. import log
+from ..utils.files import save_upload_to_temp
+from ..utils.media import get_duration_seconds, get_filesize_bytes
+from ..workers.app import celery_app
 
 
 class TranscriptionTaskService(
@@ -87,7 +87,12 @@ class TranscriptionTaskService(
             },
         )
 
-        return TranscriptionTask.from_model(transcription_task_model)
+        return TranscriptionTask(
+            task_id=transcription_task_model.id,
+            status=transcription_task_model.status,
+            created_at=transcription_task_model.created_at,
+            message=transcription_task_model.message,
+        )
 
     async def get_transcription_task(
         self,

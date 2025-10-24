@@ -6,6 +6,8 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: str = "DEBUG"
 
+    ROOT_PATH: str = "/api/v1"
+
     DB_HOST: str
     DB_PORT: int
     DB_NAME: str
