@@ -2,6 +2,7 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from scalar_fastapi import get_scalar_api_reference
 
+from src.config import settings
 from src.schemas import HealthCheck
 from src.transcription.routes import router as speech_recognition_router
 
@@ -25,11 +26,9 @@ async def healthcheck() -> HealthCheck:
 
 
 @router.get("/docs", include_in_schema=False)
-async def scalar_html(request: Request):
-    openapi_url = str(request.url_for("openapi"))
-
+async def scalar_html():
     return get_scalar_api_reference(
-        openapi_url=openapi_url,
+        openapi_url=f'{settings.ROOT_PATH}/openapi.json',
         title="Speech recognition API",
     )
 
