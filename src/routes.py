@@ -28,7 +28,7 @@ async def healthcheck() -> HealthCheck:
 @router.get("/docs", include_in_schema=False)
 async def scalar_html():
     return get_scalar_api_reference(
-        openapi_url=f'{settings.ROOT_PATH}/openapi.json',
+        openapi_url=f"{settings.ROOT_PATH}/openapi.json",
         title="Speech recognition API",
     )
 

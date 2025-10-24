@@ -96,9 +96,6 @@ async def transcribe(
             "description": "Transcription task retrieved successfully",
             "model": TranscriptionTaskWithResult,
         },
-        status.HTTP_404_NOT_FOUND: {
-            "description": "Transcription task not found",
-        },
     },
 )
 async def get_transcription_task(
