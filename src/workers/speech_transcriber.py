@@ -24,7 +24,7 @@ class SpeechTranscriber:
         download_root: str,
         batch_size: int,
         chunk_size: int,
-        init_models: list[Model] | None = None,
+        init_asr_models: list[Model] | None = None,
         hf_token: str | None = None,
     ):
         """
@@ -34,7 +34,7 @@ class SpeechTranscriber:
         :param device: Device to use for inference ("cpu" or "cuda").
         :param compute_type: Compute type for inference (e.g., "float32", "int8").
         :param download_root: Directory for downloading and caching models.
-        :param init_models: Optional list of models to preload at startup.
+        :param init_asr_models: Optional list of asr models to preload at startup.
         :param batch_size: Batch size for inference.
         :param chunk_size: Chunk size (in seconds) for audio splitting.
         :param hf_token: Optional Hugging Face token for private diarization model access.
@@ -50,42 +50,78 @@ class SpeechTranscriber:
         self._chunk_size = chunk_size
         self._hf_token = hf_token
 
-        self._load_models(init_models)
+        self._load_models(init_asr_models)
 
-    def _load_models(self, models: list[Model] | None) -> None:
+    def _load_models(self, asr_models: list[Model] | None) -> None:
         """
         Preloads specified ASR models into cache.
         """
-        if not models:
-            return
-        for model in models:
-            self._load_asr(model.value)
+        for lang in Language.values():
+            self._load_align(lang_code=lang)
+        self._load_diar(model_name="pyannote/speaker-diarization-community-1")
+        for model in asr_models or [Model.TURBO]:
+            self._load_asr(model)
+
+    def _load_asr(self, model_name: Model) -> None:
+        """
+        Loads an ASR model and stores it in the cache.
+        """
+        model = model_name.value
+        log.debug("Loading ASR model", model_name=model)
+        try:
+            self.__asr_cache[model] = load_model(
+                whisper_arch=model,
+                device=self._device,
+                compute_type=self._compute_type,
+                download_root=self._download_root,
+            )
+            log.debug("Loaded ASR model", model_name=model)
+        except Exception as e:
+            log.error("Failed to load ASR model", model_name=model, error=str(e))
+            raise e
+
+    def _load_align(self, lang_code: str) -> None:
+        """
+        Loads an alignment model and stores it in the cache.
+        """
+        log.debug("Loading align model", lang_code=lang_code)
+        try:
+            align_model, metadata = load_align_model(
+                language_code=lang_code,
+                device=self._device,
+                model_dir=self._download_root,
+            )
+            self.__align_cache[lang_code] = (align_model, metadata)
+            log.debug("Align model loaded", lang_code=lang_code)
+        except Exception as e:
+            log.error("Failed to load align model", lang_code=lang_code, error=str(e))
+            raise e
+
+    def _load_diar(self, model_name: str = "pyannote/speaker-diarization-3.1") -> None:
+        """
+        Loads a diarization model and stores it in the cache.
+        """
+        if not self._hf_token:
+            raise RuntimeError("HuggingFace token is required for diarization")
+        log.debug("Loading diarization pipeline...", model_name=model_name)
+        try:
+            self.__diar_cache = DiarizationPipeline(
+                model_name=model_name,
+                use_auth_token=self._hf_token,
+                device=self._device,
+            )
+            log.debug("Diarization pipeline loaded", model_name=model_name)
+        except Exception as e:
+            log.error("Failed to load diarization pipeline", model_name=model_name, error=str(e))
+            raise e
 
     def _get_asr(self, model: Model) -> FasterWhisperPipeline:
         """
         Retrieves the ASR model from cache or loads it if not present.
         """
-        key = model.value
-        if key not in self.__asr_cache:
-            self._load_asr(key)
-        return self.__asr_cache[key]
-
-    def _load_asr(self, model_name: str) -> None:
-        """
-        Loads an ASR model and stores it in the cache.
-        """
-        log.debug("Loading ASR model", model_name=model_name)
-        try:
-            self.__asr_cache[model_name] = load_model(
-                whisper_arch=model_name,
-                device=self._device,
-                compute_type=self._compute_type,
-                download_root=self._download_root,
-            )
-            log.debug("Loaded ASR model", model_name=model_name)
-        except Exception as e:
-            log.error("Failed to load ASR model", model_name=model_name, error=str(e))
-            raise e
+        if model.value not in self.__asr_cache:
+            self._load_asr(model)
+        return self.__asr_cache[model.value]
 
     def _get_align(self, lang_code: str):
         """
@@ -93,37 +129,17 @@ class SpeechTranscriber:
         if not present.
         """
         if lang_code not in self.__align_cache:
-            log.debug("Loading align model", lang_code=lang_code)
-            try:
-                align_model, metadata = load_align_model(
-                    language_code=lang_code,
-                    device=self._device,
-                    model_dir=self._download_root,
-                )
-                self.__align_cache[lang_code] = (align_model, metadata)
-                log.debug("Align model loaded", lang_code=lang_code)
-            except Exception as e:
-                log.error("Failed to load align model", lang_code=lang_code, error=str(e))
-                raise
+            self._load_align(lang_code=lang_code)
         return self.__align_cache[lang_code]
 
-    def _get_diar(self) -> DiarizationPipeline:
+    def _get_diar(
+        self, model_name: str = "pyannote/speaker-diarization-3.1"
+    ) -> DiarizationPipeline:
         """
         Retrieves the diarization model from cache or loads it if not present.
         """
         if self.__diar_cache is None:
-            if not self._hf_token:
-                raise RuntimeError("HuggingFace token is required for diarization")
-            log.debug("Loading diarization pipeline...")
-            try:
-                self.__diar_cache = DiarizationPipeline(
-                    use_auth_token=self._hf_token,
-                    device=self._device,
-                )
-                log.debug("Diarization pipeline loaded")
-            except Exception as e:
-                log.error("Failed to load diarization pipeline", error=str(e))
-                raise
+            self._load_diar(model_name)
         return self.__diar_cache
 
     @staticmethod
@@ -155,7 +171,7 @@ class SpeechTranscriber:
         log.debug(
             "Transcribing...",
             model=model.value,
-            language=language.value if language else None,
+            language=language.value,
             batch_size=self._batch_size,
             chuck_size=self._chunk_size,
         )

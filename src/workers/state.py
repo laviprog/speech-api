@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import threading
-from typing import Optional, Sequence
 
 from src.config import settings
 from src.transcription.enums import Model
 from src.workers.speech_transcriber import SpeechTranscriber
 
-_TRANSCRIBER: Optional[SpeechTranscriber] = None
+_TRANSCRIBER: SpeechTranscriber | None = None
 _LOCK = threading.Lock()
 
 
 def get_transcriber(
     *,
-    preload: Sequence[Model] | None = None,
+    preload: list[Model] | None = None,
 ) -> SpeechTranscriber:
     global _TRANSCRIBER
     if _TRANSCRIBER is None:
@@ -23,7 +22,7 @@ def get_transcriber(
                     device=settings.DEVICE,
                     compute_type=settings.COMPUTE_TYPE,
                     download_root=settings.DOWNLOAD_ROOT,
-                    init_models=list(preload or []),
+                    init_asr_models=list(preload or []),
                     batch_size=settings.BATCH_SIZE,
                     chunk_size=settings.CHUNK_SIZE,
                     hf_token=settings.HF_TOKEN,
