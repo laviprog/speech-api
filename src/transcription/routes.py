@@ -63,16 +63,20 @@ async def transcribe(
     file: Annotated[UploadFile, File(..., description="Upload file (.mp3, .wav)")],
     language: Annotated[
         Language | None,
-        Form(description="Language code for the audio (recommend, auto-detected if not provided)"),
+        Form(default=None,
+             description="Language code for the audio (recommend, auto-detected if not provided)"),
     ] = None,
     model: Annotated[
-        Model, Form(description="Transcription model to use (recommend turbo)")
+        Model, Form(default='turbo', description="Transcription model to use (recommend turbo)")
     ] = Model.TURBO,
-    recognition_mode: Annotated[bool, Form(description="Enable speaker detection")] = False,
+    recognition_mode: Annotated[
+        bool, Form(default=False, description="Enable speaker detection")] = False,
     num_speakers: Annotated[
-        int | None, Form(ge=1, le=15, description="Number of speakers for diarization")
+        int | None, Form(default=None, ge=1, le=15,
+                         description="Number of speakers for diarization")
     ] = None,
-    align_mode: Annotated[bool, Form(description="Enable word-level timestamp alignment")] = False,
+    align_mode: Annotated[
+        bool, Form(default=False, description="Enable word-level timestamp alignment")] = False,
 ) -> TranscriptionTask:
     transcription_task = await transcription_task_service.create_transcription_task(
         api_key_id=api_key_id,
