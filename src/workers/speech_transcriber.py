@@ -9,6 +9,7 @@ from whisperx.diarize import DiarizationPipeline, assign_word_speakers
 from whisperx.types import AlignedTranscriptionResult, SingleSegment, TranscriptionResult
 
 from src.transcription.enums import Language, Model
+from src.utils.retry import retry
 from src.workers import log
 
 
@@ -58,7 +59,7 @@ class SpeechTranscriber:
         """
         for lang in Language.values():
             self._load_align(lang_code=lang)
-        self._load_diar(model_name="pyannote/speaker-diarization-community-1")
+        self._load_diar()
         for model in asr_models or [Model.TURBO]:
             self._load_asr(model)
 
@@ -156,6 +157,7 @@ class SpeechTranscriber:
             raise e
         return audio
 
+    @retry
     def _transcribe(
         self,
         audio: ndarray,
@@ -183,12 +185,17 @@ class SpeechTranscriber:
                 chunk_size=self._chunk_size,
             )
             log.debug("Transcribed audio file %s", audio_file)
+        except RuntimeError as e:
+            log.error("Transcription runtime error", audio_file=audio_file, error=str(e))
+            self.clean()
+            raise e
         except Exception as e:
             log.error("Transcribing failed", audio_file=audio_file, error=str(e))
             raise e
 
         return result
 
+    @retry
     def _align(
         self, segments: list[SingleSegment], audio: ndarray, language: str
     ) -> AlignedTranscriptionResult | None:
@@ -204,10 +211,15 @@ class SpeechTranscriber:
                 audio,
                 device=self._device,
             )
+        except RuntimeError as e:
+            log.warning("Alignment failed", error=str(e))
+            self.clean()
+            raise e
         except Exception as e:
             log.warning("Alignment failed (fallback to raw segments)", error=str(e))
             return None
 
+    @retry
     def _diarize(
         self, transcription_result: TranscriptionResult, audio: ndarray, num_speakers: int
     ) -> TranscriptionResult:
@@ -221,9 +233,15 @@ class SpeechTranscriber:
         )
         try:
             diar_segments = diarization_model(audio, num_speakers=num_speakers)
-            return assign_word_speakers(diar_segments, transcription_result)
+            result = assign_word_speakers(diar_segments, transcription_result)
+            self._clean_cuda()
+            return result
+        except RuntimeError as e:
+            log.warning("Diarization failed", error=str(e))
+            self.clean()
+            raise e
         except Exception as e:
-            log.error("Diarization failed", error=str(e))
+            log.warning("Diarization failed", error=str(e))
             return transcription_result
 
     def transcribe(
@@ -265,6 +283,13 @@ class SpeechTranscriber:
 
         return transcription_result["segments"]
 
+    def _clean_cuda(self) -> None:
+        """
+        Cleans up CUDA memory if using GPU.
+        """
+        if self._device.startswith("cuda") and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     def clean(self) -> None:
         """
         Cleans up cached models and frees memory.
@@ -274,6 +299,5 @@ class SpeechTranscriber:
         self.__align_cache.clear()
         self.__diar_cache = None
         gc.collect()
-        if self._device.startswith("cuda") and torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        self._clean_cuda()
         log.debug("Cleanup complete")
