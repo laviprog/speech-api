@@ -157,7 +157,7 @@ class SpeechTranscriber:
             raise e
         return audio
 
-    @retry
+    @retry()
     def _transcribe(
         self,
         audio: ndarray,
@@ -195,7 +195,7 @@ class SpeechTranscriber:
 
         return result
 
-    @retry
+    @retry()
     def _align(
         self, segments: list[SingleSegment], audio: ndarray, language: str
     ) -> AlignedTranscriptionResult | None:
@@ -219,7 +219,7 @@ class SpeechTranscriber:
             log.warning("Alignment failed (fallback to raw segments)", error=str(e))
             return None
 
-    @retry
+    @retry()
     def _diarize(
         self, transcription_result: TranscriptionResult, audio: ndarray, num_speakers: int
     ) -> TranscriptionResult:
